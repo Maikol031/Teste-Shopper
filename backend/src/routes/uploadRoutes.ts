@@ -1,8 +1,10 @@
 import express from 'express'
-import { upload } from '../controllers/UploadController'
+import { UploadController } from '../controllers/UploadController'
 
 const router = express.Router()
 
-router.post('/upload', upload)
+const uploadController = new UploadController();
+
+router.post('/upload', uploadController.create)
 
 export default router
