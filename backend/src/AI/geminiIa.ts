@@ -7,7 +7,7 @@ const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
 
-export const run = async(mimeType:string, fileName:string, measure_type:string) =>{
+export const runGemAI = async(mimeType:string, fileName:string, measure_type:string, textPromp:string) =>{
     const fileManager = new GoogleAIFileManager(GEMINI_API_KEY);
 
     const uploadResponse = await fileManager.uploadFile(fileName, {
@@ -22,8 +22,9 @@ export const run = async(mimeType:string, fileName:string, measure_type:string) 
             fileUri: uploadResponse.file.uri
           }
         },
-        { text: "Me passe a identificação" },
+        {
+            text: textPromp
+        }
     ])
-    
-    console.log(result.response.text())
+    return result.response.text()
 }

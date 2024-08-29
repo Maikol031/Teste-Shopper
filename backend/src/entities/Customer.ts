@@ -5,10 +5,11 @@ export class Customer {
     private Id: string;
 
     constructor(id?: string) {
-        if(id && !validate(id)) {
-            throw new Error('INVALID_CUSTOMER_ID');
-        }
+        // if(id && !validate(id)) {
+        //     throw new Error('INVALID_CUSTOMER_ID');
+        // }
 
+        // this.Id = id || v4();
         this.Id = id || v4();
     }
 
