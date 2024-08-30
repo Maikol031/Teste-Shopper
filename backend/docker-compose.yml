@@ -1,10 +1,26 @@
 services:
-  mongodb:
+  mongo:
     image: mongo:latest
+    container_name: mongo
     ports:
       - "27017:27017"
-    volumes:
-      - mongodb-data:/data/db
+    networks:
+      - backend-network
 
-volumes:
-  mongodb-data:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - ${APP_PORT}:80
+    environment:
+      - URI_MONGODB=${URI_MONGODB}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    depends_on:
+      - mongo
+    networks:
+      - backend-network
+
+networks:
+  backend-network:

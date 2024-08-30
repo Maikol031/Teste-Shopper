@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = require("./app");
 const MongooseClient_1 = require("./db/MongooseClient");
-const PORT = Number(process.env.APP_PORT) || 4000;
+const PORT = Number(process.env.APP_PORT) || 3333;
 app_1.app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, MongooseClient_1.connect)();
     console.log('Server on running port', PORT);
