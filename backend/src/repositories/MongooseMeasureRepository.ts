@@ -1,51 +1,88 @@
+import { AppError } from "../entities/AppErro";
 import { Measure, MeasureProps } from "../entities/Measure";
 import { MeasureRepository } from "./MeasureRepository";
 import MeasureModel from "./models/MeasureModel";
-
 export class MongooseMeasureRepository implements MeasureRepository {
-    
+
     async save(measure: Measure): Promise<Measure> {
-       const {imageUrl: image_url, createdAt: created_at, hasConfirmed: has_confirmed, id, type, value, customer, measureIdentification: measure_identification } = measure
-        
+        const { imageUrl: image_url, createdAt: created_at, hasConfirmed: has_confirmed, id, type, value, customer } = measure
+
         await MeasureModel.create({
             customer_code: customer.id,
             image_url,
             created_at,
             has_confirmed,
-            id, 
-            type, 
+            id,
+            type,
             value,
-            measure_identification
         });
- 
-        return new Measure(measure as MeasureProps, measure.id)
-    }
-    
-    confirm(): Promise<any> {
-        throw new Error("Method not implemented.");
-    }
-    
-    async list(value?:string): Promise<any> {
+
+        return new Measure(measure as MeasureProps, measure.id);
+    };
+
+    async confirm(measure_uuid: string, value: number): Promise<boolean> {
+        const measure = await MeasureModel.findOne({
+            id: measure_uuid
+        }).exec();
+        if (!measure) {
+            throw new AppError("Leitura não encontrada", 404, "MEASURE_NOT_FOUND");
+        };
+
+        if (measure.has_confirmed) {
+            throw new AppError("Leitura do mês já realizada", 409, "CONFIRMATION_DUPLICATE");
+        }else {
+            await MeasureModel.updateOne(
+                { id: measure_uuid },
+                { $set: { has_confirmed: true, value: value } }
+            );
+
+            return true;
+        };
+    };
+
+    async list(customer_code: string, measure_type: string): Promise<any> {
+        let filter: object;
+        if (measure_type) {
+            filter = {
+                customer_code: customer_code,
+                type: measure_type
+            };
+        } else {
+            filter = {
+                customer_code: customer_code,
+            };
+        };
+        const measure = await MeasureModel.find(filter);
+        if (!measure.length) {
+            throw new AppError("Nenhuma leitura encontrada", 404, "MEASURES_NOT_FOUND");
+        };
+
+        return measure;
     }
 
-    async findById(value?:string): Promise<any>{
+    async findByMeasure(type: string, currentDate: Date): Promise<boolean> {
+        const convertCurrentDate = new Date(currentDate);
+        const firstDayOfMonth = new Date(convertCurrentDate.getFullYear(), convertCurrentDate.getMonth(), 1);
+        const firstDayOfNextMonth = new Date(convertCurrentDate.getFullYear(), convertCurrentDate.getMonth() + 1, 1);
+
         try {
-            const measure = await MeasureModel.findOne({ measure_identification: value });
-            console.log(measure); 
-    
-            if (measure !== null) {
-                console.log('Document found, throwing error');
+            const measure = await MeasureModel.findOne({
+                type: type,
+                created_at: {
+                    $gte: firstDayOfMonth,
+                    $lt: firstDayOfNextMonth
+                }
+            }).exec();
+
+            if (measure) {
                 return true;
             } else {
-            
                 return false;
-            }
-            
-        } catch (error:any) {
-            console.error('Error in checking measure existence:', error.message);
+            };
+
+        } catch (error: any) {
             throw new Error("Error checking measure existence");
-        }
+        };
 
-    }
-
-}
+    };
+};
