@@ -79,6 +79,7 @@ docker compose up
 
 <br/>
 ## Estrutura do Projeto
+```
 backend/
 ├── dist/
 ├── node_modules/
@@ -105,6 +106,7 @@ backend/
 ├── tsconfig.json
 ├── LICENSE
 └── README.md
+```
 <br/>
 ## Tecnologias usadas
 - Docker
