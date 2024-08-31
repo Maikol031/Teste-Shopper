@@ -78,6 +78,7 @@ docker compose up
 ```
 
 <br/>
+
 ## Estrutura do Projeto
 ```
 backend/
