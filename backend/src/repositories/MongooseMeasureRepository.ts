@@ -29,7 +29,7 @@ export class MongooseMeasureRepository implements MeasureRepository {
         };
 
         if (measure.has_confirmed) {
-            throw new AppError("Leitura do mês já realizada", 409, "CONFIRMATION_DUPLICATE");
+            throw new AppError("Leitura já confirmada", 409, "CONFIRMATION_DUPLICATE");
         }else {
             await MeasureModel.updateOne(
                 { id: measure_uuid },

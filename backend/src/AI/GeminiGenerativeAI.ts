@@ -27,7 +27,7 @@ export class GeminiGenerativeAI implements GenerativeAI {
                     fileUri: uploadResponse.file.uri
                 }
             },
-            { text: "retorne a leitura atual, sem strings, apenas o número" }
+            { text: "retorne a leitura do medido, sem strings, apenas o número" }
         ]);
 
         return result.response.text();
